@@ -2,5 +2,5 @@
 
 This addon depends on:
 
-- [crm](../../../../odoo-bringout-oca-ocb-crm)
-- [sms](../../../../../oca-ocb-mail/odoo-bringout-oca-ocb-sms)
+- [crm](https://github.com/bringout/oca-ocb-crm)
+- [sms](https://github.com/bringout/oca-ocb-mail)

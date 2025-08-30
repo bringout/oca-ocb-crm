@@ -2,5 +2,5 @@
 
 This addon depends on:
 
-- [crm](../../../../odoo-bringout-oca-ocb-crm)
-- [im_livechat](../../../../../oca-ocb-mail/odoo-bringout-oca-ocb-im_livechat)
+- [crm](https://github.com/bringout/oca-ocb-crm)
+- [im_livechat](https://github.com/bringout/oca-ocb-mail)
