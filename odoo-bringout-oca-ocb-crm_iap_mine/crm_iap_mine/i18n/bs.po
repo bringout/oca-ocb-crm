@@ -17,11 +17,12 @@ msgstr ""
 
 #. module: crm_iap_mine
 #. odoo-python
-#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py:0
+#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py
 #, python-format
 msgid "%d credits will be consumed to find %d companies."
 msgstr "%d kredita će biti potrošeno da se pronađe %d poduzeća."
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model_terms:ir.ui.view,arch_db:crm_iap_mine.enrich_company
 msgid "<b>Contacts</b>"
@@ -38,6 +39,13 @@ msgid ""
 "    <p>Odoo S.A.</p>\n"
 "</div>"
 msgstr ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"    <p>Poštovani,</p>\n"
+"    <p>Na vašem IAP računu za generisanje leadova više nema kredita.<br>\n"
+"    Račun možete dopuniti u postavkama CRM aplikacije.<br></p>\n"
+"    <p>S poštovanjem,</p>\n"
+"    <p>Odoo S.A.</p>\n"
+"</div>"
 
 #. module: crm_iap_mine
 #: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_form
@@ -46,6 +54,9 @@ msgid ""
 "request did not return any result (no credits were used). Try removing some "
 "filters.</span>"
 msgstr ""
+"<span attrs=\"{'invisible': [('error_type', '!=', 'no_result')]}\">Vaš "
+"zahtjev nije vratio nijedan rezultat (nisu korišćeni krediti). Pokušajte "
+"ukloniti neke filtere.</span>"
 
 #. module: crm_iap_mine
 #: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_form
@@ -97,6 +108,7 @@ msgstr "CRM IAP industrija potencijalnih klijenata"
 msgid "CRM Lead Mining Request"
 msgstr "CRM zahtjev za rudarenje potencijalnih klijenata"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_form
 msgid "Cancel"
@@ -107,9 +119,9 @@ msgstr "Odustani"
 msgid "Capital Goods"
 msgstr "Kapitalena dobra"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_industry__color
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_role__color
 msgid "Color Index"
 msgstr "Indeks boje"
 
@@ -118,6 +130,7 @@ msgstr "Indeks boje"
 msgid "Commercial & Professional Services"
 msgstr "Komercijalne i profesionalne usluge"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields.selection,name:crm_iap_mine.selection__crm_iap_lead_mining_request__search_type__companies
 msgid "Companies"
@@ -158,6 +171,7 @@ msgstr "Potrošačke usluge"
 msgid "Consumer Staples"
 msgstr "Osnovni potrošački proizvodi"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__country_ids
 msgid "Countries"
@@ -165,29 +179,24 @@ msgstr "Države"
 
 #. module: crm_iap_mine
 #. odoo-python
-#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py:0
+#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py
 #, python-format
 msgid "Create a Lead Mining Request"
 msgstr "Kreiraj zahtjev za rudarenje potencijalnih klijenata"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_helpers__create_uid
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_industry__create_uid
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__create_uid
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_role__create_uid
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_seniority__create_uid
 msgid "Created by"
 msgstr "Kreirao"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_helpers__create_date
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_industry__create_date
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__create_date
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_role__create_date
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_seniority__create_date
 msgid "Created on"
 msgstr "Kreirano"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_form
 msgid "Default Tags"
@@ -198,12 +207,9 @@ msgstr "Zadane oznake"
 msgid "Display Lead Label"
 msgstr "Prikaži label potencijalnog klijenta"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_helpers__display_name
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_industry__display_name
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__display_name
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_role__display_name
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_seniority__display_name
 msgid "Display Name"
 msgstr "Naziv"
 
@@ -212,18 +218,19 @@ msgstr "Naziv"
 msgid "Diversified Financials & Financial Services"
 msgstr "Diversifikovane finansije i finansijske usluge"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields.selection,name:crm_iap_mine.selection__crm_iap_lead_mining_request__state__done
-#: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_search
 msgid "Done"
 msgstr "Riješeno"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields.selection,name:crm_iap_mine.selection__crm_iap_lead_mining_request__state__draft
-#: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_search
 msgid "Draft"
 msgstr "Nacrt"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model_terms:ir.ui.view,arch_db:crm_iap_mine.enrich_company
 msgid "Email"
@@ -234,9 +241,9 @@ msgstr "E-pošta"
 msgid "Energy & Utilities "
 msgstr "Energija i komunalne usluge "
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields.selection,name:crm_iap_mine.selection__crm_iap_lead_mining_request__state__error
-#: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_search
 msgid "Error"
 msgstr "Greška"
 
@@ -245,6 +252,7 @@ msgstr "Greška"
 msgid "Error Type"
 msgstr "Tip greške"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__contact_filter_type
 msgid "Filter on"
@@ -260,33 +268,36 @@ msgstr "Filter na veličini"
 msgid "Food, Beverage & Tobacco"
 msgstr "Hrana, piće i duhan"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_form
 msgid "From"
 msgstr "Od"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #. odoo-javascript
 #. odoo-python
-#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py:0
-#: code:addons/crm_iap_mine/static/src/views/generate_leads_views.xml:0
-#: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_form
+#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py
 #, python-format
 msgid "Generate Leads"
 msgstr "Generiraj potencijale"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #. odoo-python
-#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py:0
+#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py
 #, python-format
 msgid "Generate new leads based on their country, industry, size, etc."
-msgstr "Generiraj nove potencijale temeljene na državama, idustriji, veličini i sl."
+msgstr ""
+"Generiraj nove potencijale temeljene na državama, idustriji, veličini i sl."
 
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__lead_ids
 msgid "Generated Lead / Opportunity"
 msgstr "Generirani potencijalni klijent / prilika"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_search
 msgid "Group By"
@@ -304,16 +315,11 @@ msgstr "Pomoćne metode za crm_iap_mine module"
 
 #. module: crm_iap_mine
 #: model:mail.template,name:crm_iap_mine.lead_generation_no_credits
-#: model:mail.template,subject:crm_iap_mine.lead_generation_no_credits
 msgid "IAP Lead Generation Notification"
 msgstr "IAP obavještenje generiranja potencijalnih klijenata"
 
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_helpers__id
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_industry__id
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__id
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_role__id
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_seniority__id
 msgid "ID"
 msgstr "ID"
 
@@ -322,11 +328,13 @@ msgstr "ID"
 msgid "Independent Power and Renewable Electricity Producers"
 msgstr "Nezavisni proizvođači energije i obnovljive električne energije"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__industry_ids
 msgid "Industries"
 msgstr "Industrije"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_industry__name
 msgid "Industry"
@@ -342,30 +350,21 @@ msgstr "Naziv industrije već postoji!"
 msgid "Insufficient Credits"
 msgstr "Nedovoljno kredita"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_helpers____last_update
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_industry____last_update
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request____last_update
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_role____last_update
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_seniority____last_update
 msgid "Last Modified on"
 msgstr "Zadnja promjena"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_helpers__write_uid
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_industry__write_uid
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__write_uid
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_role__write_uid
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_seniority__write_uid
 msgid "Last Updated by"
 msgstr "Promijenio"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_helpers__write_date
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_industry__write_date
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__write_date
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_role__write_date
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_seniority__write_date
 msgid "Last Updated on"
 msgstr "Vrijeme promjene"
 
@@ -379,6 +378,7 @@ msgstr "Krediti za kontakte potencijalnih klijenata"
 msgid "Lead Credits"
 msgstr "Krediti potencijalnih klijenata"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.ui.menu,name:crm_iap_mine.crm_menu_lead_generation
 msgid "Lead Generation"
@@ -386,13 +386,12 @@ msgstr "Generiranje potencijala"
 
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_lead__lead_mining_request_id
-#: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_search
 msgid "Lead Mining Request"
 msgstr "Lead Mining Request"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.actions.act_window,name:crm_iap_mine.crm_iap_lead_mining_request_action
-#: model:ir.ui.menu,name:crm_iap_mine.crm_iap_lead_mining_request_menu_action
 msgid "Lead Mining Requests"
 msgstr "Zahtjev za pronalazak prilika"
 
@@ -401,38 +400,42 @@ msgstr "Zahtjev za pronalazak prilika"
 msgid "Lead Total Credits"
 msgstr "Ukupni krediti potencijalnih klijenata"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model,name:crm_iap_mine.model_crm_lead
 msgid "Lead/Opportunity"
 msgstr "Potencijal/prilika"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields.selection,name:crm_iap_mine.selection__crm_iap_lead_mining_request__lead_type__lead
-#: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_search
 msgid "Leads"
 msgstr "Potencijali"
 
 #. module: crm_iap_mine
 #. odoo-javascript
-#: code:addons/crm_iap_mine/static/src/js/tours/crm_iap_lead.js:0
+#: code:addons/crm_iap_mine/static/src/js/tours/crm_iap_lead.js
 #, python-format
 msgid ""
 "Looking for more opportunities ?<br>Try the <b>Lead Generation</b> tool."
 msgstr ""
+"Tražite više prilika?<br>Pokušajte alat za <b>generiranje potencijalnih "
+"klijenata</b>."
 
 #. module: crm_iap_mine
 #: model:crm.iap.lead.industry,name:crm_iap_mine.crm_iap_mine_industry_148
 msgid "Materials"
 msgstr "Materijali"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:crm.iap.lead.industry,name:crm_iap_mine.crm_iap_mine_industry_86
 msgid "Media"
 msgstr "Datoteka"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_seniority__name
-#: model_terms:ir.ui.view,arch_db:crm_iap_mine.enrich_company
 msgid "Name"
 msgstr "Naziv"
 
@@ -441,12 +444,10 @@ msgstr "Naziv"
 msgid "Name already exists!"
 msgstr "Naziv već postoji!"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #. odoo-python
-#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py:0
-#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py:0
-#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py:0
-#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py:0
+#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py
 #, python-format
 msgid "New"
 msgstr "Novi"
@@ -458,11 +459,12 @@ msgstr "Nema rezultata"
 
 #. module: crm_iap_mine
 #. odoo-javascript
-#: code:addons/crm_iap_mine/static/src/js/tours/crm_iap_lead.js:0
+#: code:addons/crm_iap_mine/static/src/js/tours/crm_iap_lead.js
 #, python-format
 msgid "Now, just let the magic happen!"
 msgstr "Sada samo pustite da se dogodi čudo!"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__contact_number
 msgid "Number of Contacts"
@@ -475,19 +477,18 @@ msgstr "Broj generiranih potencijalnih klijenata"
 
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__lead_number
-#: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_tree
 msgid "Number of Leads"
 msgstr "Broj potencijalnih klijenata"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields.selection,name:crm_iap_mine.selection__crm_iap_lead_mining_request__lead_type__opportunity
-#: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_search
 msgid "Opportunities"
 msgstr "Prilike"
 
 #. module: crm_iap_mine
 #. odoo-python
-#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py:0
+#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py
 #, python-format
 msgid "Opportunity created by Odoo Lead Generation"
 msgstr "Prilika kreirana od strane Odoo generatora potencijalnih klijenata"
@@ -512,6 +513,7 @@ msgstr "Starshinstvo osobe"
 msgid "Pharmaceuticals, Biotechnology & Life Sciences"
 msgstr "Farmaceutska industrija, biotehnologija i life sciences"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model_terms:ir.ui.view,arch_db:crm_iap_mine.enrich_company
 msgid "Phone"
@@ -522,6 +524,7 @@ msgstr "Telefon"
 msgid "Preferred Role"
 msgstr "Preferirana uloga"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:crm.iap.lead.industry,name:crm_iap_mine.crm_iap_mine_industry_114
 msgid "Real Estate"
@@ -537,6 +540,7 @@ msgstr "Broj zahtjeva"
 msgid "Retailing"
 msgstr "Trgovina na malo"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_form
 msgid "Retry"
@@ -544,16 +548,16 @@ msgstr "Pokušaj ponovo"
 
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_industry__reveal_ids
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_role__reveal_id
-#: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_seniority__reveal_id
 msgid "Reveal"
 msgstr "Otkrij"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields.selection,name:crm_iap_mine.selection__crm_iap_lead_mining_request__contact_filter_type__role
 msgid "Role"
 msgstr "Uloga"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_role__name
 msgid "Role Name"
@@ -564,29 +568,30 @@ msgstr "Naziv uloge"
 msgid "Role name already exists!"
 msgstr "Naziv uloge već postoji!"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__team_id
-#: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_search
 msgid "Sales Team"
 msgstr "Prodajni tim"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__user_id
-#: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_search
 msgid "Salesperson"
 msgstr "Prodavač"
 
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__seniority_id
-#: model:ir.model.fields.selection,name:crm_iap_mine.selection__crm_iap_lead_mining_request__contact_filter_type__seniority
 msgid "Seniority"
 msgstr "Starshinstvo"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_industry__sequence
 msgid "Sequence"
 msgstr "Sekvenca"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__company_size_min
 msgid "Size"
@@ -597,6 +602,7 @@ msgstr "Veličina"
 msgid "Software & Services"
 msgstr "Software i usluge"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__state_ids
 msgid "States"
@@ -607,16 +613,19 @@ msgstr "Županije/fed.države"
 msgid "Status"
 msgstr "Status"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_form
 msgid "Submit"
 msgstr "Potvrdi"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__tag_ids
 msgid "Tags"
 msgstr "Oznake"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__search_type
 msgid "Target"
@@ -634,7 +643,7 @@ msgstr "Telekomunikacijske usluge"
 
 #. module: crm_iap_mine
 #. odoo-python
-#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py:0
+#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py
 #, python-format
 msgid "This makes a total of %d credits for this request."
 msgstr "To čini ukupno %d kredita za ovaj zahtjev."
@@ -644,20 +653,22 @@ msgstr "To čini ukupno %d kredita za ovaj zahtjev."
 msgid "Transportation"
 msgstr "TRANSPORT"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:ir.model.fields,field_description:crm_iap_mine.field_crm_iap_lead_mining_request__lead_type
-#: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_search
 msgid "Type"
 msgstr "Vrsta"
 
 #. module: crm_iap_mine
 #. odoo-python
-#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py:0
+#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py
 #, python-format
 msgid ""
 "Up to %d additional credits will be consumed to identify %d contacts per "
 "company."
 msgstr ""
+"Do %d dodatnih kredita će biti potrošeno da se identifikuje %d kontakata po "
+"poduzeću."
 
 #. module: crm_iap_mine
 #: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_form
@@ -666,7 +677,7 @@ msgstr "Šta vam treba?"
 
 #. module: crm_iap_mine
 #. odoo-javascript
-#: code:addons/crm_iap_mine/static/src/js/tours/crm_iap_lead.js:0
+#: code:addons/crm_iap_mine/static/src/js/tours/crm_iap_lead.js
 #, python-format
 msgid "Which Industry do you want to target?"
 msgstr "Koju industriju želite ciljati?"
@@ -678,7 +689,7 @@ msgstr "Nemate dovoljno kredita da pošaljete ovaj zahtjev."
 
 #. module: crm_iap_mine
 #. odoo-python
-#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py:0
+#: code:addons/crm_iap_mine/models/crm_iap_lead_mining_request.py
 #, python-format
 msgid "Your request could not be executed: %s"
 msgstr "Vaš zahtjev nije mogao biti izvršen: %s"
@@ -778,6 +789,7 @@ msgstr "vlasnik"
 msgid "president"
 msgstr "predsjednik"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model:crm.iap.lead.role,name:crm_iap_mine.crm_iap_mine_role_17
 msgid "product"
@@ -808,6 +820,7 @@ msgstr "istraživanje"
 msgid "sale"
 msgstr "prodaja"
 
+# taken from hr.po
 #. module: crm_iap_mine
 #: model_terms:ir.ui.view,arch_db:crm_iap_mine.crm_iap_lead_mining_request_view_form
 msgid "to"

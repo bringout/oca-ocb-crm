@@ -17,36 +17,37 @@ msgstr ""
 
 #. module: crm_mail_plugin
 #. odoo-javascript
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_outlook.xml:0
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml
 #, python-format
 msgid ""
 "%(expected_revenue)s + %(recurring_revenue)s %(recurring_plan)s at "
 "%(probability)s%"
 msgstr ""
+"%(expected_revenue)s + %(recurring_revenue)s %(recurring_plan)s na "
+"%(probability)s%"
 
 #. module: crm_mail_plugin
 #. odoo-javascript
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_outlook.xml:0
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml
 #, python-format
 msgid "%(expected_revenue)s at %(probability)s%"
 msgstr "%(expected_revenue)s na %(probability)s%"
 
 #. module: crm_mail_plugin
 #. odoo-javascript
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml
 #, python-format
 msgid "Could not create the lead"
 msgstr "Nije moguće kreirati potencijalnog klijenta"
 
 #. module: crm_mail_plugin
 #. odoo-javascript
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml
 #, python-format
 msgid "Email already logged on the lead"
 msgstr "E-mail već evidentiran na potencijalnom klijentu"
 
+# taken from hr.po
 #. module: crm_mail_plugin
 #: model:ir.model,name:crm_mail_plugin.model_crm_lead
 msgid "Lead/Opportunity"
@@ -59,42 +60,43 @@ msgstr "Potencijalni klijent: preusmjeri formu u način uređivanja"
 
 #. module: crm_mail_plugin
 #. odoo-javascript
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_outlook.xml:0
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_outlook.xml
 #, python-format
 msgid "Log Email Into Lead"
 msgstr "Evidentiraj e-mail u potencijalnog klijenta"
 
 #. module: crm_mail_plugin
 #. odoo-javascript
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml
 #, python-format
 msgid "Log the email on the lead"
 msgstr "Evidentiraj e-mail na potencijalnom klijentu"
 
 #. module: crm_mail_plugin
 #. odoo-javascript
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_outlook.xml:0
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_outlook.xml
 #, python-format
 msgid "No opportunities found for this contact."
 msgstr "Nema pronađenih prilika za ovaj kontakt."
 
+# taken from hr.po
 #. module: crm_mail_plugin
 #. odoo-javascript
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_outlook.xml:0
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_outlook.xml
 #, python-format
 msgid "Opportunities"
 msgstr "Prilike"
 
 #. module: crm_mail_plugin
 #. odoo-javascript
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_outlook.xml:0
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_outlook.xml
 #, python-format
 msgid "Opportunities (%(count)s)"
 msgstr "Prilike (%(count)s)"
 
 #. module: crm_mail_plugin
 #. odoo-javascript
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml
 #, python-format
 msgid "Opportunities (%s)"
 msgstr "Prilike (%s)"
@@ -102,26 +104,27 @@ msgstr "Prilike (%s)"
 #. module: crm_mail_plugin
 #: model:ir.actions.server,name:crm_mail_plugin.lead_creation_prefilled_action
 msgid "Redirection to the lead creation form with prefilled info"
-msgstr "Preusmjeravanje na formu za kreiranje potencijalnog klijenta sa popunjenim informacijama"
+msgstr ""
+"Preusmjeravanje na formu za kreiranje potencijalnog klijenta sa popunjenim "
+"informacijama"
 
 #. module: crm_mail_plugin
 #. odoo-javascript
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_outlook.xml:0
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml
 #, python-format
 msgid "Save Contact to create new Opportunities."
 msgstr "Spremite kontakt da kreirate nove prilike."
 
 #. module: crm_mail_plugin
 #. odoo-javascript
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_outlook.xml:0
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_outlook.xml
 #, python-format
 msgid "The Contact needs to exist to create Opportunity."
 msgstr "Kontakt mora postojati da se kreira prilika."
 
 #. module: crm_mail_plugin
 #. odoo-javascript
-#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml
 #, python-format
 msgid "You can only create opportunities for existing customers."
 msgstr "Možete kreirati prilike samo za postojeće kupce."
