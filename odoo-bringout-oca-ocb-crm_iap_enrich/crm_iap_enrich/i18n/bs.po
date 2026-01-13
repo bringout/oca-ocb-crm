@@ -47,7 +47,7 @@ msgstr "CRM: obogati potencijalne klijente (IAP)"
 #. module: crm_iap_enrich
 #: model:ir.model,name:crm_iap_enrich.model_res_config_settings
 msgid "Config Settings"
-msgstr "Postavke konfiguracije"
+msgstr "Postavke"
 
 # taken from hr.po
 #. module: crm_iap_enrich
