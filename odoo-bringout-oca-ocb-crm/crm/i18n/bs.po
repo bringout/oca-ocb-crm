@@ -72,7 +72,7 @@ msgstr "%(assigned)s potencijali raspoređeni za %(team_name)s tim."
 #: code:addons/crm/models/crm_lead.py
 #, python-format
 msgid "%(attach_name)s (from %(lead_name)s)"
-msgstr "% endif"
+msgstr "%(attach_name)s (from %(lead_name)s)"
 
 # taken from hr.po
 #. module: crm
@@ -80,10 +80,7 @@ msgstr "% endif"
 #: code:addons/crm/models/crm_team.py
 #, python-format
 msgid "%(duplicates)s duplicates leads have been merged."
-msgstr ""
-"% set email = object.env['crm.team'].search([('alias_name','!=', False)],limit=1).alias_id.display_name\n"
-"    % if email\n"
-"    <strong style=\"font-size: 16px;\">Probajte mail gateway</strong>"
+msgstr "%(duplicates)s duplicates leads have been merged."
 
 # taken from hr.po
 #. module: crm
@@ -1339,9 +1336,7 @@ msgstr "Dana za zatvaranje"
 #: code:addons/crm/models/crm_lead.py
 #, python-format
 msgid "Deadline: %s"
-msgstr ""
-"Kreiraj tags that fit your business (Proizvod Struktura, sales Tip, etc.) to"
-" better manage and tack your opportunities."
+msgstr "Deadline: %s"
 
 # taken from hr.po
 #. module: crm
@@ -1501,7 +1496,7 @@ msgstr "Email Kvaliteta"
 #. module: crm
 #: model:ir.model.fields,field_description:crm.field_crm_lead__email_cc
 msgid "Email cc"
-msgstr "Email cc"
+msgstr "Email CC"
 
 #. module: crm
 #: model_terms:ir.ui.view,arch_db:crm.crm_lead_merge_summary
@@ -1717,7 +1712,7 @@ msgstr "Analiza predviđanja"
 #: code:addons/crm/models/crm_lead.py
 #, python-format
 msgid "From %(source_name)s"
-msgstr "Followup"
+msgstr "From %(source_name)s"
 
 # taken from hr.po
 #. module: crm
