@@ -9,22 +9,24 @@
                 <field name="name"/>
                 <field name="sequence"/>
                 <field name="is_won"/>
-                <field name="team_id"/>
+                <field name="team_ids"/>
             </search>
         </field>
     </record>
 
-    <!-- STAGES TREE VIEW + MUTI_EDIT -->
+    <!-- STAGES LIST VIEW + MUTI_EDIT -->
     <record id="crm_stage_tree" model="ir.ui.view">
-        <field name="name">crm.stage.tree</field>
+        <field name="name">crm.stage.list</field>
         <field name="model">crm.stage</field>
         <field name="arch" type="xml">
-            <tree string="Stages" multi_edit="1">
+            <list string="Stages" multi_edit="1">
                 <field name="sequence" widget="handle"/>
                 <field name="name" readonly="1"/>
                 <field name="is_won"/>
-                <field name="team_id"/>
-            </tree>
+                <field name="team_ids" widget="many2many_tags"/>
+                <field name="rotting_threshold_days" optional="hide"/>
+                <field name="color" optional="hide" widget="color_picker"/>
+            </list>
         </field>
     </record>
 
@@ -43,9 +45,14 @@
                     </div>
                     <group>
                         <group>
-                            <field name="is_won"/>
                             <field name="fold"/>
-                            <field name="team_id" options='{"no_open": True, "no_create": True}' attrs="{'invisible': [('team_count', '&lt;=', 1)]}" kanban_view_ref="%(sales_team.crm_team_view_kanban)s"/>
+                            <field name="color" widget="color_picker"/>
+                            <field name="team_ids" widget="many2many_tags" placeholder="Shared with all teams"
+                                options='{"no_open": True, "no_create": True}' invisible="team_count &lt;= 1" context="{'kanban_view_ref': 'sales_team.crm_team_view_kanban'}"/>
+                        </group>
+                        <group>
+                            <field name="is_won"/>
+                            <field name="rotting_threshold_days" invisible="is_won"/>
                         </group>
                         <field name="team_count" invisible="1"/>
                     </group>

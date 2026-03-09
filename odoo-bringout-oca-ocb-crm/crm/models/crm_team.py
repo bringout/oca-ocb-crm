@@ -1,31 +1,28 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import datetime
 import logging
 import random
-import threading
 
 from ast import literal_eval
+from markupsafe import Markup
 
-from odoo import api, exceptions, fields, models, _
-from odoo.osv import expression
+from odoo import api, exceptions, fields, models, modules, _
+from odoo.fields import Domain
 from odoo.tools import float_compare, float_round
 from odoo.tools.safe_eval import safe_eval
 
 _logger = logging.getLogger(__name__)
 
 
-class Team(models.Model):
+class CrmTeam(models.Model):
     _name = 'crm.team'
     _inherit = ['mail.alias.mixin', 'crm.team']
     _description = 'Sales Team'
 
     use_leads = fields.Boolean('Leads', help="Check this box to filter and qualify incoming requests as leads before converting them into opportunities and assigning them to a salesperson.")
     use_opportunities = fields.Boolean('Pipeline', default=True, help="Check this box to manage a presales process with opportunities.")
-    alias_id = fields.Many2one(
-        'mail.alias', string='Alias', ondelete="restrict", required=True,
-        help="The email address associated with this channel. New emails received will automatically create new leads assigned to the channel.")
+    alias_id = fields.Many2one(help="The email address associated with this channel. New emails received will automatically create new leads assigned to the channel.")
     # assignment
     assignment_enabled = fields.Boolean('Lead Assign', compute='_compute_assignment_enabled')
     assignment_auto_enabled = fields.Boolean('Auto Assignment', compute='_compute_assignment_enabled')
@@ -42,18 +39,9 @@ class Team(models.Model):
     lead_all_assigned_month_count = fields.Integer(
         string='# Leads/Opps assigned this month', compute='_compute_lead_all_assigned_month_count',
         help="Number of leads and opportunities assigned this last month.")
-    opportunities_count = fields.Integer(
-        string='# Opportunities', compute='_compute_opportunities_data')
-    opportunities_amount = fields.Monetary(
-        string='Opportunities Revenues', compute='_compute_opportunities_data')
-    opportunities_overdue_count = fields.Integer(
-        string='# Overdue Opportunities', compute='_compute_opportunities_overdue_data')
-    opportunities_overdue_amount = fields.Monetary(
-        string='Overdue Opportunities Revenues', compute='_compute_opportunities_overdue_data',)
-    # alias: improve fields coming from _inherits, use inherited to avoid replacing them
-    alias_user_id = fields.Many2one(
-        'res.users', related='alias_id.alias_user_id', readonly=False, inherited=True,
-        domain=lambda self: [('groups_id', 'in', self.env.ref('sales_team.group_sale_salesman_all_leads').id)])
+    lead_all_assigned_month_exceeded = fields.Boolean('Exceed monthly lead assignement', compute="_compute_lead_all_assigned_month_count",
+        help="True if the monthly lead assignment count is greater than the maximum assignment limit, false otherwise."
+    )
     # properties
     lead_properties_definition = fields.PropertiesDefinition('Lead Properties')
 
@@ -63,7 +51,7 @@ class Team(models.Model):
             team.assignment_max = sum(member.assignment_max for member in team.crm_team_member_ids)
 
     def _compute_assignment_enabled(self):
-        assign_enabled = self.env['ir.config_parameter'].sudo().get_param('crm.lead.auto.assignment', False)
+        assign_enabled = self.env['crm.lead']._is_rule_based_assignment_activated()
         auto_assign_enabled = False
         if assign_enabled:
             assign_cron = self.sudo().env.ref('crm.ir_cron_crm_lead_assign', raise_if_not_found=False)
@@ -74,42 +62,17 @@ class Team(models.Model):
     def _compute_lead_unassigned_count(self):
         leads_data = self.env['crm.lead']._read_group([
             ('team_id', 'in', self.ids),
-            ('type', '=', 'lead'),
             ('user_id', '=', False),
-        ], ['team_id'], ['team_id'])
-        counts = {datum['team_id'][0]: datum['team_id_count'] for datum in leads_data}
+        ], ['team_id'], ['__count'])
+        counts = {team.id: count for team, count in leads_data}
         for team in self:
             team.lead_unassigned_count = counts.get(team.id, 0)
 
-    @api.depends('crm_team_member_ids.lead_month_count')
+    @api.depends('crm_team_member_ids.lead_month_count', 'assignment_max')
     def _compute_lead_all_assigned_month_count(self):
         for team in self:
             team.lead_all_assigned_month_count = sum(member.lead_month_count for member in team.crm_team_member_ids)
-
-    def _compute_opportunities_data(self):
-        opportunity_data = self.env['crm.lead']._read_group([
-            ('team_id', 'in', self.ids),
-            ('probability', '<', 100),
-            ('type', '=', 'opportunity'),
-        ], ['expected_revenue:sum', 'team_id'], ['team_id'])
-        counts = {datum['team_id'][0]: datum['team_id_count'] for datum in opportunity_data}
-        amounts = {datum['team_id'][0]: datum['expected_revenue'] for datum in opportunity_data}
-        for team in self:
-            team.opportunities_count = counts.get(team.id, 0)
-            team.opportunities_amount = amounts.get(team.id, 0)
-
-    def _compute_opportunities_overdue_data(self):
-        opportunity_data = self.env['crm.lead']._read_group([
-            ('team_id', 'in', self.ids),
-            ('probability', '<', 100),
-            ('type', '=', 'opportunity'),
-            ('date_deadline', '<', fields.Date.to_string(fields.Datetime.now()))
-        ], ['expected_revenue', 'team_id'], ['team_id'])
-        counts = {datum['team_id'][0]: datum['team_id_count'] for datum in opportunity_data}
-        amounts = {datum['team_id'][0]: (datum['expected_revenue']) for datum in opportunity_data}
-        for team in self:
-            team.opportunities_overdue_count = counts.get(team.id, 0)
-            team.opportunities_overdue_amount = amounts.get(team.id, 0)
+            team.lead_all_assigned_month_exceeded = team.lead_all_assigned_month_count > team.assignment_max
 
     @api.onchange('use_leads', 'use_opportunities')
     def _onchange_use_leads_opportunities(self):
@@ -131,7 +94,7 @@ class Team(models.Model):
     # ------------------------------------------------------------
 
     def write(self, vals):
-        result = super(Team, self).write(vals)
+        result = super().write(vals)
         if 'use_leads' in vals or 'use_opportunities' in vals:
             for team in self:
                 alias_vals = team._alias_get_creation_values()
@@ -175,14 +138,14 @@ class Team(models.Model):
                         'variable': frequency.variable,
                         'won_count': frequency.won_count if float_compare(frequency.won_count, 0.1, 2) == 1 else 0.1,
                     })
-        return super(Team, self).unlink()
+        return super().unlink()
 
     # ------------------------------------------------------------
     # MESSAGING
     # ------------------------------------------------------------
 
     def _alias_get_creation_values(self):
-        values = super(Team, self)._alias_get_creation_values()
+        values = super()._alias_get_creation_values()
         values['alias_model_id'] = self.env['ir.model']._get('crm.lead').id
         if self.id:
             if not self.use_leads and not self.use_opportunities:
@@ -198,51 +161,30 @@ class Team(models.Model):
     # ------------------------------------------------------------
 
     @api.model
-    def _cron_assign_leads(self, work_days=None):
+    def _cron_assign_leads(self, force_quota=False, creation_delta_days=7):
         """ Cron method assigning leads. Leads are allocated to all teams and
-        assigned to their members. It is based on either cron configuration
-        either forced through ``work_days`` parameter.
+        assigned to their members.
 
-        When based on cron configuration purpose of cron is to assign leads to
-        sales persons. Assigned workload is set to the workload those sales
-        people should perform between two cron iterations. If their maximum
-        capacity is reached assign process will not assign them any more lead.
-
-        e.g. cron is active with interval_number 3, interval_type days. This
-        means cron runs every 3 days. Cron will assign leads for 3 work days
-        to salespersons each 3 days unless their maximum capacity is reached.
-
-        If cron runs on an hour- or minute-based schedule minimum assignment
-        performed is equivalent to 0.2 workdays to avoid rounding issues.
-        Max assignment performed is for 30 days as it is better to run more
-        often than planning for more than one month. Assign process is best
-        designed to run every few hours (~4 times / day) or each few days.
+        The cron is designed to run at least once a day or more.
+        A number of leads will be assigned each time depending on the daily leads
+        already assigned.
+        This allows the assignment process based on the cron to work on a daily basis
+        without allocating too much leads on members if the cron is executed multiple
+        times a day.
+        The daily quota of leads can be forcefully assigned with force_quota
+        (ignoring the daily leads already assigned).
 
         See ``CrmTeam.action_assign_leads()`` and its sub methods for more
         details about assign process.
 
-        :param float work_days: see ``CrmTeam.action_assign_leads()``;
         """
-        assign_cron = self.sudo().env.ref('crm.ir_cron_crm_lead_assign', raise_if_not_found=False)
-        if not work_days and assign_cron and assign_cron.active:
-            if assign_cron.interval_type == 'months':
-                work_days = 30  # maximum one month of work
-            elif assign_cron.interval_type == 'weeks':
-                work_days = min(30, assign_cron.interval_number * 7)  # max at 30 (better lead repartition)
-            elif assign_cron.interval_type == 'days':
-                work_days = min(30, assign_cron.interval_number * 1)  # max at 30 (better lead repartition)
-            elif assign_cron.interval_type == 'hours':
-                work_days = max(0.2, assign_cron.interval_number / 24)    # min at 0.2 to avoid small numbers issues
-            elif assign_cron.interval_type == 'minutes':
-                work_days = max(0.2, assign_cron.interval_number / 1440)    # min at 0.2 to avoid small numbers issues
-        work_days = work_days if work_days else 1  # avoid void values
         self.env['crm.team'].search([
             '&', '|', ('use_leads', '=', True), ('use_opportunities', '=', True),
             ('assignment_optout', '=', False)
-        ])._action_assign_leads(work_days=work_days)
+        ])._action_assign_leads(force_quota=force_quota, creation_delta_days=creation_delta_days)
         return True
 
-    def action_assign_leads(self, work_days=1, log=True):
+    def action_assign_leads(self):
         """ Manual (direct) leads assignment. This method both
 
           * assigns leads to teams given by self;
@@ -250,26 +192,20 @@ class Team(models.Model):
 
         See sub methods for more details about assign process.
 
-        :param float work_days: number of work days to consider when assigning leads
-          to teams or salespersons. We consider that Member.assignment_max (or
-          its equivalent on team model) targets 30 work days. We make a ratio
-          between expected number of work days and maximum assignment for those
-          30 days to know lead count to assign.
-
-        :return action: a client notification giving some insights on assign
+        :returns: action, a client notification giving some insights on assign
           process;
         """
-        teams_data, members_data = self._action_assign_leads(work_days=work_days)
+        teams_data, members_data = self._action_assign_leads(force_quota=True, creation_delta_days=0)
 
         # format result messages
         logs = self._action_assign_leads_logs(teams_data, members_data)
-        html_message = '<br />'.join(logs)
+        html_message = Markup('<br />').join(logs)
         notif_message = ' '.join(logs)
 
         # log a note in case of manual assign (as this method will mainly be called
         # on singleton record set, do not bother doing a specific message per team)
         log_action = _("Lead Assignment requested by %(user_name)s", user_name=self.env.user.name)
-        log_message = "<p>%s<br /><br />%s</p>" % (log_action, html_message)
+        log_message = Markup("<p>%s<br /><br />%s</p>") % (log_action, html_message)
         self._message_log_batch(bodies=dict((team.id, log_message) for team in self))
 
         return {
@@ -285,7 +221,7 @@ class Team(models.Model):
             }
         }
 
-    def _action_assign_leads(self, work_days=1):
+    def _action_assign_leads(self, force_quota=False, creation_delta_days=7):
         """ Private method for lead assignment. This method both
 
           * assigns leads to teams given by self;
@@ -293,19 +229,27 @@ class Team(models.Model):
 
         See sub methods for more details about assign process.
 
-        :param float work_days: see ``CrmTeam.action_assign_leads()``;
+        :param bool force_quota: Assign the full daily quota without taking into account
+                                 the leads already assigned today
+        :param int creation_delta_days: Take into account all leads created in the last nb days (by default 7).
+                                        If set to zero we take all the past leads.
 
-        :return teams_data, members_data: structure-based result of assignment
-          process. For more details about data see ``CrmTeam._allocate_leads()``
-          and ``CrmTeamMember._assign_and_convert_leads``;
+        :returns: 2-elements tuple (teams_data, members_data) as a
+          structure-based result of assignment process. For more details
+          about data see :meth:`CrmTeam._allocate_leads` and
+          :meth:`CrmTeam._assign_and_convert_leads`;
         """
-        if not self.env.user.has_group('sales_team.group_sale_manager') and not self.env.user.has_group('base.group_system'):
+        if not (self.env.user.has_group('sales_team.group_sale_manager') or self.env.is_system()):
             raise exceptions.UserError(_('Lead/Opportunities automatic assignment is limited to managers or administrators'))
 
-        _logger.info('### START Lead Assignment (%d teams, %d sales persons, %.2f work_days)', len(self), len(self.crm_team_member_ids), work_days)
-        teams_data = self._allocate_leads(work_days=work_days)
+        _logger.info(
+            '### START Lead Assignment (%d teams, %d sales persons, force daily quota: %s)',
+            len(self),
+            len(self.crm_team_member_ids),
+            "ON" if force_quota else "OFF")
+        teams_data = self._allocate_leads(creation_delta_days=creation_delta_days)
         _logger.info('### Team repartition done. Starting salesmen assignment.')
-        members_data = self.crm_team_member_ids._assign_and_convert_leads(work_days=work_days)
+        members_data = self._assign_and_convert_leads(force_quota=force_quota)
         _logger.info('### END Lead Assignment')
         return teams_data, members_data
 
@@ -313,10 +257,11 @@ class Team(models.Model):
         """ Tool method to prepare notification about assignment process result.
 
         :param teams_data: see ``CrmTeam._allocate_leads()``;
-        :param members_data: see ``CrmTeamMember._assign_and_convert_leads()``;
+        :param members_data: see ``CrmTeam._assign_and_convert_leads()``;
 
-        :return list: list of formatted logs, ready to be formatted into a nice
+        :returns: list of formatted logs, ready to be formatted into a nice
         plaintext or html message at caller's will
+        :rtype: list[str]
         """
         # extract some statistics
         assigned = sum(len(teams_data[team]['assigned']) + len(teams_data[team]['merged']) for team in teams_data)
@@ -375,7 +320,7 @@ class Team(models.Model):
 
         return message_parts
 
-    def _allocate_leads(self, work_days=1):
+    def _allocate_leads(self, creation_delta_days=7):
         """ Allocate leads to teams given by self. This method sets ``team_id``
         field on lead records that are unassigned (no team and no responsible).
         No salesperson is assigned in this process. Its purpose is simply to
@@ -387,8 +332,9 @@ class Team(models.Model):
         Heuristic of this method is the following:
           * find unassigned leads for each team, aka leads being
             * without team, without user -> not assigned;
-            * not in a won stage, and not having False/0 (lost) or 100 (won)
-              probability) -> live leads;
+            * not won nor inactive -> live leads;
+            * created in the last creation_delta_days (in the last week by default)
+              This avoid to take into account old leads in the allocation.
             * if set, a delay after creation can be applied (see BUNDLE_HOURS_DELAY)
               parameter explanations here below;
             * matching the team's assignment domain (empty means
@@ -416,38 +362,47 @@ class Team(models.Model):
         allocation will be proportional to their size (assignment of their
         members).
 
-        :config int crm.assignment.bundle: deprecated
-        :config int crm.assignment.commit.bundle: optional config parameter allowing
-          to set size of lead batch to be committed together. By default 100
-          which is a good trade-off between transaction time and speed
-        :config int crm.assignment.delay: optional config parameter giving a
-          delay before taking a lead into assignment process (BUNDLE_HOURS_DELAY)
-          given in hours. Purpose if to allow other crons or automated actions
-          to make their job. This option is mainly historic as its purpose was
-          to let automated actions prepare leads and score before PLS was added
-          into CRM. This is now not required anymore but still supported;
+        Supported ``ir.config_parameter`` settings.
 
-        :param float work_days: see ``CrmTeam.action_assign_leads()``;
+        ``crm.assignment.bundle``
+            deprecated
 
-        :return teams_data: dict() with each team assignment result:
-          team: {
-            'assigned': set of lead IDs directly assigned to the team (no
-              duplicate or merged found);
-            'merged': set of lead IDs merged and assigned to the team (main
-              leads being results of merge process);
-            'duplicates': set of lead IDs found as duplicates and merged into
-              other leads. Those leads are unlinked during assign process and
-              are already removed at return of this method;
-          }, ...
+        ``crm.assignment.commit.bundle`` (``int``)
+            Allow to set size of lead batch to be committed together. By
+            default 100 which is a good trade-off between transaction time and
+            speed.
+
+        ``crm.assignment.delay`` (``float``)
+            Give a delay before taking a lead into assignment process
+            (BUNDLE_HOURS_DELAY) given in hours. Purpose if to allow other
+            crons or automation rules to make their job. This option is mainly
+            historic as its purpose was to let automation rules prepare leads
+            and score before PLS was added into CRM. This is now not required
+            anymore but still supported;
+
+        :param int creation_delta_days: see ``CrmTeam._action_assign_leads()``;
+
+        :rtype: dict[str, Any]
+        :return: dictionary mapping each team with assignment result:
+
+            ``assigned`` (``set[int]``)
+                Lead IDs directly assigned to the team
+                (no duplicate or merged found)
+
+            ``merged`` (``set[int]``)
+                Lead IDs merged and assigned to the team
+                (main leads being results of merge process)
+
+            ``duplicates`` (``set[int]``)
+                Lead IDs found as duplicates and merged into other leads.
+                Those leads are unlinked during assign process and are already
+                removed at return of this method
+
         """
-        if work_days < 0.2 or work_days > 30:
-            raise ValueError(
-                _('Leads team allocation should be done for at least 0.2 or maximum 30 work days, not %.2f.', work_days)
-            )
 
-        BUNDLE_HOURS_DELAY = int(self.env['ir.config_parameter'].sudo().get_param('crm.assignment.delay', default=0))
+        BUNDLE_HOURS_DELAY = float(self.env['ir.config_parameter'].sudo().get_param('crm.assignment.delay', default=0))
         BUNDLE_COMMIT_SIZE = int(self.env['ir.config_parameter'].sudo().get_param('crm.assignment.commit.bundle', 100))
-        auto_commit = not getattr(threading.current_thread(), 'testing', False)
+        auto_commit = not modules.module.current_test
 
         # leads
         max_create_dt = self.env.cr.now() - datetime.timedelta(hours=BUNDLE_HOURS_DELAY)
@@ -459,16 +414,18 @@ class Team(models.Model):
             if not team.assignment_max:
                 continue
 
-            lead_domain = expression.AND([
+            lead_domain = Domain.AND([
                 literal_eval(team.assignment_domain or '[]'),
                 [('create_date', '<=', max_create_dt)],
                 ['&', ('team_id', '=', False), ('user_id', '=', False)],
-                ['|', ('stage_id', '=', False), ('stage_id.is_won', '=', False)]
+                [('won_status', '!=', 'won')]
             ])
+            if creation_delta_days > 0:
+                lead_domain &= Domain('create_date', '>', self.env.cr.now() - datetime.timedelta(days=creation_delta_days))
 
             leads = self.env["crm.lead"].search(lead_domain)
-            # Fill duplicate cache: search for duplicate lead before the assignation
-            # avoid to flush during the search at every assignation
+            # Fill duplicate cache: search for duplicate lead before the assignment
+            # avoid to flush during the search at every assignment
             for lead in leads:
                 if lead not in duplicates_lead_cache:
                     duplicates_lead_cache[lead] = lead._get_lead_duplicates(email=lead.email_from)
@@ -487,7 +444,7 @@ class Team(models.Model):
         # and the first commit occur at the end of the bundle,
         # the first transaction can be long which we want to avoid
         if auto_commit:
-            self._cr.commit()
+            self.env.cr.commit()
 
         # assignment process data
         global_data = dict(assigned=set(), merged=set(), duplicates=set())
@@ -519,13 +476,13 @@ class Team(models.Model):
                 # unlink duplicates once
                 self.env['crm.lead'].browse(lead_unlink_ids).unlink()
                 lead_unlink_ids = set()
-                self._cr.commit()
+                self.env.cr.commit()
 
         # unlink duplicates once
         self.env['crm.lead'].browse(lead_unlink_ids).unlink()
 
         if auto_commit:
-            self._cr.commit()
+            self.env.cr.commit()
 
         # some final log
         _logger.info('## Assigned %s leads', (len(global_data['assigned']) + len(global_data['merged'])))
@@ -587,6 +544,151 @@ class Team(models.Model):
             'duplicates': leads_dup_ids,
         }
 
+    def _get_lead_to_assign_domain(self):
+        return [
+            ('user_id', '=', False),
+            ('date_open', '=', False),
+            ('team_id', 'in', self.ids),
+        ]
+
+    def _assign_and_convert_leads(self, force_quota=False):
+        """ Main processing method to assign leads to sales team members. It also
+        converts them into opportunities. This method should be called after
+        ``_allocate_leads`` as this method assigns leads already allocated to
+        the member's team. Its main purpose is therefore to distribute team
+        workload on its members based on their capacity.
+
+        This method follows the following heuristic
+            * Get quota per member
+            * Find all leads to be assigned per team
+            * Sort list of members per number of leads received in the last 24h
+            * Assign the lead using round robin
+                * Find the first member with a compatible domain
+                * Assign the lead
+                * Move the member at the end of the list if quota is not reached
+                * Remove it otherwise
+                * Move to the next lead
+
+        :param bool force_quota: see ``CrmTeam._action_assign_leads()``;
+
+        :returns: dict() with each member assignment result:
+          membership: {
+            'assigned': set of lead IDs directly assigned to the member;
+          }, ...
+
+        """
+        auto_commit = not modules.module.current_test
+        result_data = {}
+        commit_bundle_size = int(self.env['ir.config_parameter'].sudo().get_param('crm.assignment.commit.bundle', 100))
+        teams_with_members = self.filtered(lambda team: team.crm_team_member_ids)
+        quota_per_member = {member: member._get_assignment_quota(force_quota=force_quota) for member in self.crm_team_member_ids}
+        counter = 0
+        leads_per_team = dict(self.env['crm.lead']._read_group(
+            teams_with_members._get_lead_to_assign_domain(),
+            ['team_id'],
+            # Do not use recordset aggregation to avoid fetching all the leads at once in memory
+            # We want to have in memory only leads for the current team
+            # and make sure we need them before fetching them
+            ['id:array_agg'],
+        ))
+
+        def _assign_lead(lead, members, member_leads, members_quota, assign_lst, optional_lst=None):
+            """ Find relevant member whose domain(s) accept the lead. If found convert
+            and update internal structures accordingly. """
+            member_found = next((member for member in members if lead in member_leads[member]), False)
+            if not member_found:
+                return
+            lead.with_context(mail_auto_subscribe_no_notify=True).convert_opportunity(
+                lead.partner_id,
+                user_ids=member_found.user_id.ids
+            )
+            result_data[member_found]['assigned'] += lead
+
+            # if member still has quota, move at end of list; otherwise just remove
+            assign_lst.remove(member_found)
+            if optional_lst is not None:
+                optional_lst.remove(member_found)
+            members_quota[member_found] -= 1
+            if members_quota[member_found] > 0:
+                assign_lst.append(member_found)
+                if optional_lst is not None:
+                    optional_lst.append(member_found)
+            return member_found
+
+        for team, leads_to_assign_ids in leads_per_team.items():
+            members_to_assign = list(team.crm_team_member_ids.filtered(lambda member:
+                not member.assignment_optout and quota_per_member.get(member, 0) > 0
+            ).sorted(key=lambda member: quota_per_member.get(member, 0), reverse=True))
+            if not members_to_assign:
+                continue
+            result_data.update({
+                member: {"assigned": self.env["crm.lead"], "quota": quota_per_member[member]}
+                for member in members_to_assign
+            })
+            # Need to check that record still exists since the ids have been fetched at the beginning of the process
+            # Previous iteration has committed the change, records may have been deleted in the meanwhile
+            to_assign = self.env['crm.lead'].browse(leads_to_assign_ids).exists()
+
+            members_to_assign_wpref = [
+                m for m in members_to_assign
+                if m.assignment_domain_preferred and literal_eval(m.assignment_domain_preferred or '')
+            ]
+            preferred_leads_per_member = {
+                member: to_assign.filtered_domain(
+                    Domain.AND([
+                        literal_eval(member.assignment_domain or '[]'),
+                        literal_eval(member.assignment_domain_preferred)
+                    ])
+                ) for member in members_to_assign_wpref
+            }
+            preferred_leads = self.env['crm.lead'].concat(*[lead for lead in preferred_leads_per_member.values()])
+            assigned_preferred_leads = self.env['crm.lead']
+
+            # first assign loop: preferred leads, always priority
+            for lead in preferred_leads.sorted(lambda lead: (-lead.probability, id)):
+                counter += 1
+                member_found = _assign_lead(lead, members_to_assign_wpref, preferred_leads_per_member, quota_per_member, members_to_assign, members_to_assign_wpref)
+                if not member_found:
+                    continue
+                assigned_preferred_leads += lead
+                if auto_commit and counter % commit_bundle_size == 0:
+                    self.env.cr.commit()
+
+            # second assign loop: fill up with other leads
+            to_assign = to_assign - assigned_preferred_leads
+            leads_per_member = {
+                member: to_assign.filtered_domain(literal_eval(member.assignment_domain or '[]'))
+                for member in members_to_assign
+            }
+            for lead in to_assign.sorted(lambda lead: (-lead.probability, id)):
+                counter += 1
+                member_found = _assign_lead(lead, members_to_assign, leads_per_member, quota_per_member, members_to_assign)
+                if not member_found:
+                    continue
+                if auto_commit and counter % commit_bundle_size == 0:
+                    self.env.cr.commit()
+
+            # Make sure we commit at least at the end of the team
+            if auto_commit:
+                self.env.cr.commit()
+            # Once we are done with a team we don't need to keep the leads in memory
+            # Try to avoid to explode memory usage
+            self.env.invalidate_all()
+            _logger.info(
+                'Team %s: Assigned %s leads based on preference, on a potential of %s (limited by quota)',
+                team.name, len(assigned_preferred_leads), len(preferred_leads)
+            )
+        _logger.info(
+            'Assigned %s leads to %s salesmen',
+            sum(len(r['assigned']) for r in result_data.values()), len(result_data)
+        )
+        for member, member_info in result_data.items():
+            _logger.info(
+                '-> member %s of team %s: assigned %d/%d leads (%s)',
+                member.id, member.crm_team_id.id, len(member_info["assigned"]), member_info["quota"], member_info["assigned"]
+            )
+        return result_data
+
     # ------------------------------------------------------------
     # ACTIONS
     # ------------------------------------------------------------
@@ -602,61 +704,56 @@ class Team(models.Model):
         action = self.env['ir.actions.actions']._for_xml_id('crm.crm_lead_action_forecast')
         return self._action_update_to_pipeline(action)
 
+    def action_open_leads(self):
+        action = self.env['ir.actions.actions']._for_xml_id('crm.crm_case_form_view_salesteams_opportunity')
+        rcontext = {
+            'team': self,
+        }
+        action['help'] = self.env['ir.ui.view']._render_template('crm.crm_action_helper', values=rcontext)
+        return action
+
+    def action_open_unassigned_leads(self):
+        action = self.action_open_leads()
+        context_str = action.get('context', '{}')
+        if context_str:
+            try:
+                context = safe_eval(action['context'], {'active_id': self.id, 'uid': self.env.uid})
+            except (NameError, ValueError):
+                context = {}
+        else:
+            context = {}
+        action['context'] = context | {'search_default_unassigned': True}
+        return action
+
     @api.model
     def _action_update_to_pipeline(self, action):
+        self.check_access("read")
         user_team_id = self.env.user.sale_team_id.id
         if not user_team_id:
             user_team_id = self.search([], limit=1).id
             action['help'] = "<p class='o_view_nocontent_smiling_face'>%s</p><p>" % _("Create an Opportunity")
             if user_team_id:
-                if self.user_has_groups('sales_team.group_sale_manager'):
+                if self.env.user.has_group('sales_team.group_sale_manager'):
                     action['help'] += "<p>%s</p>" % _("""As you are a member of no Sales Team, you are showed the Pipeline of the <b>first team by default.</b>
                                         To work with the CRM, you should <a name="%d" type="action" tabindex="-1">join a team.</a>""",
                                         self.env.ref('sales_team.crm_team_action_config').id)
                 else:
                     action['help'] += "<p>%s</p>" % _("""As you are a member of no Sales Team, you are showed the Pipeline of the <b>first team by default.</b>
                                         To work with the CRM, you should join a team.""")
-        action_context = safe_eval(action['context'], {'uid': self.env.uid})
+        try:
+            action_context = safe_eval(action['context'], {'uid': self.env.uid})
+        except (NameError, ValueError):
+            action_context = {}
         action['context'] = action_context
         return action
 
     def _compute_dashboard_button_name(self):
-        super(Team, self)._compute_dashboard_button_name()
+        super()._compute_dashboard_button_name()
         team_with_pipelines = self.filtered(lambda el: el.use_opportunities)
         team_with_pipelines.update({'dashboard_button_name': _("Pipeline")})
 
     def action_primary_channel_button(self):
         self.ensure_one()
         if self.use_opportunities:
-            action = self.env['ir.actions.actions']._for_xml_id('crm.crm_case_form_view_salesteams_opportunity')
-            rcontext = {
-                'team': self,
-            }
-            action['help'] = self.env['ir.ui.view']._render_template('crm.crm_action_helper', values=rcontext)
-            return action
-        return super(Team,self).action_primary_channel_button()
-
-    def _graph_get_model(self):
-        if self.use_opportunities:
-            return 'crm.lead'
-        return super(Team,self)._graph_get_model()
-
-    def _graph_date_column(self):
-        if self.use_opportunities:
-            return 'create_date'
-        return super(Team,self)._graph_date_column()
-
-    def _graph_y_query(self):
-        if self.use_opportunities:
-            return 'count(*)'
-        return super(Team,self)._graph_y_query()
-
-    def _extra_sql_conditions(self):
-        if self.use_opportunities:
-            return "AND type LIKE 'opportunity'"
-        return super(Team,self)._extra_sql_conditions()
-
-    def _graph_title_and_key(self):
-        if self.use_opportunities:
-            return ['', _('New Opportunities')] # no more title
-        return super(Team, self)._graph_title_and_key()
+            return self.action_open_leads()
+        return super().action_primary_channel_button()

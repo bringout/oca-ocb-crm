@@ -1,22 +1,23 @@
 [project]
 name = "odoo-bringout-oca-ocb-crm"
 version = "16.0.0"
-description = "CRM - Track leads and close opportunities"
+description = "CRM - 
+        Track leads and close opportunities
+        "
 authors = [
     { name = "Ernad Husremovic", email = "hernad@bring.out.ba" }
 ]
 dependencies = [
-    "odoo-bringout-oca-ocb-base_setup>=16.0.0",
-    "odoo-bringout-oca-ocb-sales_team>=16.0.0",
-    "odoo-bringout-oca-ocb-mail>=16.0.0",
-    "odoo-bringout-oca-ocb-calendar>=16.0.0",
-    "odoo-bringout-oca-ocb-resource>=16.0.0",
-    "odoo-bringout-oca-ocb-utm>=16.0.0",
-    "odoo-bringout-oca-ocb-web_tour>=16.0.0",
-    "odoo-bringout-oca-ocb-web_kanban_gauge>=16.0.0",
-    "odoo-bringout-oca-ocb-contacts>=16.0.0",
-    "odoo-bringout-oca-ocb-digest>=16.0.0",
-    "odoo-bringout-oca-ocb-phone_validation>=16.0.0",
+    "odoo-bringout-oca-ocb-base_setup>=19.0.0",
+    "odoo-bringout-oca-ocb-sales_team>=19.0.0",
+    "odoo-bringout-oca-ocb-mail>=19.0.0",
+    "odoo-bringout-oca-ocb-calendar>=19.0.0",
+    "odoo-bringout-oca-ocb-resource>=19.0.0",
+    "odoo-bringout-oca-ocb-utm>=19.0.0",
+    "odoo-bringout-oca-ocb-web_tour>=19.0.0",
+    "odoo-bringout-oca-ocb-contacts>=19.0.0",
+    "odoo-bringout-oca-ocb-digest>=19.0.0",
+    "odoo-bringout-oca-ocb-phone_validation>=19.0.0",
     "requests>=2.25.1"
 ]
 readme = "README.md"
@@ -26,14 +27,14 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11", 
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Office/Business",
 ]
 
 [project.urls]
-homepage = "https://github.com/bringout/odoo-bringout-oca-ocb-crm"
-repository = "https://github.com/bringout/odoo-bringout-oca-ocb-crm"
+homepage = "https://github.com/bringout/0"
+repository = "https://github.com/bringout/0"
 
 [build-system]
 requires = ["hatchling"]

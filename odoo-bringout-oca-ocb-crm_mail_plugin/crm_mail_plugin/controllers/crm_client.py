@@ -11,7 +11,7 @@ from .mail_plugin import MailPluginController
 class CrmClient(MailPluginController):
 
     @http.route(route='/mail_client_extension/log_single_mail_content',
-                type="json", auth="outlook", cors="*")
+                type="jsonrpc", auth="outlook", cors="*")
     def log_single_mail_content(self, lead, message, **kw):
         """
             deprecated as of saas-14.3, not needed for newer versions of the mail plugin but necessary
@@ -20,7 +20,7 @@ class CrmClient(MailPluginController):
         crm_lead = request.env['crm.lead'].browse(lead)
         crm_lead.message_post(body=message)
 
-    @http.route('/mail_client_extension/lead/get_by_partner_id', type="json", auth="outlook", cors="*")
+    @http.route('/mail_client_extension/lead/get_by_partner_id', type="jsonrpc", auth="outlook", cors="*")
     def crm_lead_get_by_partner_id(self, partner, limit=5, offset=0, **kwargs):
         """
             deprecated as of saas-14.3, not needed for newer versions of the mail plugin but necessary
@@ -37,9 +37,9 @@ class CrmClient(MailPluginController):
         """
         server_action = http.request.env.ref("crm_mail_plugin.lead_creation_prefilled_action")
         return request.redirect(
-            '/web#action=%s&model=crm.lead&partner_id=%s' % (server_action.id, int(partner_id)))
+            '/odoo/action-%s?partner_id=%s' % (server_action.id, int(partner_id)))
 
-    @http.route('/mail_plugin/lead/create', type='json', auth='outlook', cors="*")
+    @http.route('/mail_plugin/lead/create', type='jsonrpc', auth='outlook', cors="*")
     def crm_lead_create(self, partner_id, email_body, email_subject):
         partner = request.env['res.partner'].browse(partner_id).exists()
         if not partner:
@@ -60,5 +60,5 @@ class CrmClient(MailPluginController):
             for supporting older versions
         """
         action = http.request.env.ref("crm.crm_lead_view_form")
-        url = '/web#id=%s&action=%s&model=crm.lead&edit=1&model=crm.lead' % (lead_id, action.id)
+        url = '/odoo/action-%s/%s?edit=1' % (action.id, lead_id)
         return request.redirect(url)

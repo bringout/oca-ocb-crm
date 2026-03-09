@@ -5,7 +5,7 @@ from odoo import api, fields, models, _
 from odoo.exceptions import AccessError
 
 
-class Digest(models.Model):
+class DigestDigest(models.Model):
     _inherit = 'digest.digest'
 
     kpi_crm_lead_created = fields.Boolean('New Leads')
@@ -16,31 +16,24 @@ class Digest(models.Model):
     def _compute_kpi_crm_lead_created_value(self):
         if not self.env.user.has_group('sales_team.group_sale_salesman'):
             raise AccessError(_("Do not have access, skip this data for user's digest email"))
-        for record in self:
-            start, end, company = record._get_kpi_compute_parameters()
-            record.kpi_crm_lead_created_value = self.env['crm.lead'].search_count([
-                ('create_date', '>=', start),
-                ('create_date', '<', end),
-                ('company_id', '=', company.id)
-            ])
+
+        self._calculate_company_based_kpi('crm.lead', 'kpi_crm_lead_created_value')
 
     def _compute_kpi_crm_opportunities_won_value(self):
         if not self.env.user.has_group('sales_team.group_sale_salesman'):
             raise AccessError(_("Do not have access, skip this data for user's digest email"))
-        for record in self:
-            start, end, company = record._get_kpi_compute_parameters()
-            record.kpi_crm_opportunities_won_value = self.env['crm.lead'].search_count([
-                ('type', '=', 'opportunity'),
-                ('probability', '=', '100'),
-                ('date_closed', '>=', start),
-                ('date_closed', '<', end),
-                ('company_id', '=', company.id)
-            ])
+
+        self._calculate_company_based_kpi(
+            'crm.lead',
+            'kpi_crm_opportunities_won_value',
+            date_field='date_closed',
+            additional_domain=[('type', '=', 'opportunity'), ('probability', '=', '100')],
+        )
 
     def _compute_kpis_actions(self, company, user):
-        res = super(Digest, self)._compute_kpis_actions(company, user)
-        res['kpi_crm_lead_created'] = 'crm.crm_lead_action_pipeline&menu_id=%s' % self.env.ref('crm.crm_menu_root').id
-        res['kpi_crm_opportunities_won'] = 'crm.crm_lead_action_pipeline&menu_id=%s' % self.env.ref('crm.crm_menu_root').id
+        res = super()._compute_kpis_actions(company, user)
+        res['kpi_crm_lead_created'] = 'crm.crm_lead_action_pipeline?menu_id=%s' % self.env.ref('crm.crm_menu_root').id
+        res['kpi_crm_opportunities_won'] = 'crm.crm_lead_action_pipeline?menu_id=%s' % self.env.ref('crm.crm_menu_root').id
         if user.has_group('crm.group_use_lead'):
-            res['kpi_crm_lead_created'] = 'crm.crm_lead_all_leads&menu_id=%s' % self.env.ref('crm.crm_menu_root').id
+            res['kpi_crm_lead_created'] = 'crm.crm_lead_all_leads?menu_id=%s' % self.env.ref('crm.crm_menu_root').id
         return res

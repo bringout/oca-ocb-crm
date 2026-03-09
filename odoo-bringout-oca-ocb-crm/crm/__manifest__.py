@@ -4,7 +4,7 @@
 
 {
     'name': 'CRM',
-    'version': '1.8',
+    'version': '1.9',
     'category': 'Sales/CRM',
     'sequence': 15,
     'summary': 'Track leads and close opportunities',
@@ -17,7 +17,6 @@
         'resource',
         'utm',
         'web_tour',
-        'web_kanban_gauge',
         'contacts',
         'digest',
         'phone_validation',
@@ -36,6 +35,7 @@
         'data/ir_cron_data.xml',
         'data/mail_message_subtype_data.xml',
         'data/crm_recurring_plan_data.xml',
+        'data/crm_tour.xml',
 
         'wizard/crm_lead_lost_views.xml',
         'wizard/crm_lead_to_opportunity_views.xml',
@@ -50,6 +50,7 @@
         'views/crm_lead_views.xml',
         'views/crm_team_member_views.xml',
         'views/digest_views.xml',
+        'views/mail_activity_plan_views.xml',
         'views/mail_activity_views.xml',
         'views/res_config_settings_views.xml',
         'views/res_partner_views.xml',
@@ -62,34 +63,33 @@
     ],
     'demo': [
         'data/crm_team_demo.xml',
+        'data/crm_stage_demo.xml',
         'data/mail_template_demo.xml',
         'data/crm_team_member_demo.xml',
-        'data/mail_activity_type_demo.xml',
         'data/crm_lead_demo.xml',
     ],
     'installable': True,
     'application': True,
     'assets': {
-        'mail.assets_messaging': [
-            'crm/static/src/models/*.js',
-        ],
         'web.assets_backend': [
-            'crm/static/src/views/**/*.js',
-            'crm/static/src/views/**/*.xml',
-            'crm/static/src/js/tours/crm.js',
-            'crm/static/src/scss/crm.scss',
-            'crm/static/src/scss/crm_team_member_views.scss',
+            'crm/static/src/**',
+            ('remove', 'crm/static/src/views/forecast_graph/**'),
+            ('remove', 'crm/static/src/views/forecast_pivot/**'),
+        ],
+        'web.assets_backend_lazy': [
+            'crm/static/src/views/forecast_graph/**',
+            'crm/static/src/views/forecast_pivot/**',
         ],
         'web.assets_tests': [
             'crm/static/tests/tours/**/*',
         ],
-        'web.qunit_suite_tests': [
-            'crm/static/tests/crm_kanban_progress_bar_mrr_sum_field_tests.js',
-            'crm/static/tests/mock_server.js',
-            'crm/static/tests/forecast_kanban_tests.js',
-            'crm/static/tests/forecast_view_tests.js',
-            'crm/static/tests/crm_rainbowman_tests.js',
+        'web.assets_unit_tests': [
+            'crm/static/tests/mock_server/**/*',
+            'crm/static/tests/crm_test_helpers.js',
+            'crm/static/tests/**/*.test.js',
+            'crm/static/tests/crm_mock_server.js'
         ],
     },
+    'author': 'Odoo S.A.',
     'license': 'LGPL-3',
 }

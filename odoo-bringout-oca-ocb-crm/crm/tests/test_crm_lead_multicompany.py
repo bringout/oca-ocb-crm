@@ -205,6 +205,7 @@ class TestCRMLeadMultiCompany(TestCrmCommon):
         # writing current user on lead would imply putting its team and team's company
         # on lead (aka self.company_2), and this clashes with company restriction on
         # customer
+        self.env.user.company_ids -= self.company_main
         with self.assertRaises(UserError):
             lead.write({
                 'user_id': self.env.user,
@@ -301,22 +302,26 @@ class TestCRMLeadMultiCompany(TestCrmCommon):
         self.assertEqual(crm_lead_form.company_id, self.company_2, 'Crm: company comes from partner')
 
     def test_gateway_incompatible_company_error_on_incoming_email(self):
+        # set automatic assignment to Manual to circumvent automatic lead assignment,
+        # so as to reproduce the conditions in which the original bug appeared
+        self.env['ir.config_parameter'].set_param('crm.lead.auto.assignment', True)
         self.assertTrue(self.sales_team_1.alias_name)
         self.assertFalse(self.sales_team_1.company_id)
         customer_company = self.env['res.partner'].create({
             'company_id': self.company_2.id,
             'email': 'customer.another.company@test.customer.com',
-            'mobile': '+32455000000',
+            'phone': '+32455000000',
             'name': 'InCompany Customer',
         })
 
         new_lead = self.format_and_process(
             INCOMING_EMAIL,
             customer_company.email,
-            '%s@%s' % (self.sales_team_1.alias_name, self.alias_domain),
+            self.sales_team_1.alias_email,
             subject='Team having partner in company',
             target_model='crm.lead',
         )
+        self.assertFalse(new_lead.user_id)
         self.assertEqual(new_lead.company_id, self.company_2)
         self.assertEqual(new_lead.email_from, customer_company.email)
         self.assertEqual(new_lead.partner_id, customer_company)

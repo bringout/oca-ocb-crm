@@ -1,71 +1,73 @@
-# -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
-
 from odoo.addons.crm.tests.common import TestCrmCommon
-from odoo.tests.common import Form
 from odoo.tests import tagged, users
 
 
-@tagged('res_partner')
-class TestPartner(TestCrmCommon):
+# This is explicit: we want CRM only check, to test base method
+@tagged('res_partner', '-post_install', 'at_install')
+class TestResPartner(TestCrmCommon):
 
-    @users('user_sales_leads')
-    def test_parent_sync_sales_rep(self):
-        """ Test team_id / user_id sync from parent to children if the contact
-        is a person. Company children are not updated. """
-        contact_company = self.contact_company.with_env(self.env)
-        contact_company_1 = self.contact_company_1.with_env(self.env)
-        self.assertFalse(contact_company.team_id)
-        self.assertFalse(contact_company.user_id)
-        self.assertFalse(contact_company_1.team_id)
-        self.assertFalse(contact_company_1.user_id)
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.contact_1_1, cls.contact_1_2 = cls.env['res.partner'].create([
+            {
+                'name': 'Philip J Fry Bouffe-tête',
+                'email': 'bouffe.tete@test.example.com',
+                'function': 'Bouffe-Tête',
+                'lang': cls.lang_en.code,
+                'phone': False,
+                'parent_id': cls.contact_1.id,
+                'is_company': False,
+                'street': 'Same as Fry',
+                'city': 'New York',
+                'country_id': cls.env.ref('base.us').id,
+                'zip': '54321',
+            }, {
+                'name': 'Philip J Fry Banjo',
+                'email': 'banjo@test.example.com',
+                'function': 'Being a banjo',
+                'lang': cls.lang_en.code,
+                'phone': False,
+                'parent_id': cls.contact_1.id,
+                'is_company': False,
+                'street': 'Same as Fry',
+                'city': 'New York',
+                'country_id': cls.env.ref('base.us').id,
+                'zip': '54321',
+            }
+        ])
 
-        child = self.contact_1.with_env(self.env)
-        self.assertEqual(child.parent_id, self.contact_company_1)
-        self.assertFalse(child.team_id)
-        self.assertFalse(child.user_id)
+        cls.test_leads = cls.env['crm.lead'].create([
+            {
+                'name': 'CompanyLead',
+                'type': 'lead',
+                'partner_id': cls.contact_company_1.id,
+            }, {
+                'name': 'ChildLead',
+                'type': 'lead',
+                'partner_id': cls.contact_1.id,
+            }, {
+                'name': 'GrandChildLead',
+                'type': 'lead',
+                'partner_id': cls.contact_1_1.id,
+            }, {
+                'name': 'GrandChildOpp',
+                'type': 'opportunity',
+                'partner_id': cls.contact_1_1.id,
+            }, {
+                'name': 'Nobody',
+                'type': 'opportunity',
+            },
+        ])
 
-        # update comppany sales rep info
-        contact_company.user_id = self.env.uid
-        contact_company.team_id = self.sales_team_1.id
-
-        # change child parent: shold update sales rep info
-        child.parent_id = contact_company.id
-        self.assertEqual(child.user_id, self.env.user)
-
-        # test form tool
-        # <field name="team_id" groups="base.group_no_one"/>
-        with self.debug_mode():
-            partner_form = Form(self.env['res.partner'], 'base.view_partner_form')
-        partner_form.parent_id = contact_company
-        partner_form.company_type = 'person'
-        partner_form.name = 'Hermes Conrad'
-        self.assertEqual(partner_form.team_id, self.sales_team_1)
-        self.assertEqual(partner_form.user_id, self.env.user)
-        partner_form.parent_id = contact_company_1
-        self.assertEqual(partner_form.team_id, self.sales_team_1)
-        self.assertEqual(partner_form.user_id, self.env.user)
-
-        # test form tool
-        # <field name="team_id" groups="base.group_no_one"/>
-        with self.debug_mode():
-            partner_form = Form(self.env['res.partner'], 'base.view_partner_form')
-        # `parent_id` is invisible when `is_company` is True (`company_type == 'company'`)
-        # and parent_id is not set
-        # So, set a temporary `parent_id` before setting the contact as company
-        # to make `parent_id` visible in the interface while being a company
-        # <field name="parent_id"
-        #     attrs="{
-        #         'invisible': [
-        #             '|',
-        #             '&amp;', ('is_company','=', True),('parent_id', '=', False),
-        #             ('company_name', '!=', False),('company_name', '!=', '')
-        #         ]
-        #     }"
-        # />
-        partner_form.parent_id = contact_company_1
-        partner_form.company_type = 'company'
-        partner_form.parent_id = contact_company
-        partner_form.name = 'Mom Corp'
-        self.assertFalse(partner_form.team_id)
-        self.assertFalse(partner_form.user_id)
+    @users('user_sales_manager')
+    def test_fields_opportunity_count(self):
+        (
+            contact_company_1, contact_1, contact_1_1, contact_1_2
+        ) = (
+            self.contact_company_1 + self.contact_1 + self.contact_1_1 + self.contact_1_2
+        ).with_env(self.env)
+        self.assertEqual(contact_company_1.opportunity_count, 4, 'Should contain own + children leads')
+        self.assertEqual(contact_1.opportunity_count, 3, 'Should contain own + child leads')
+        self.assertEqual(contact_1_1.opportunity_count, 2, 'Should contain own, aka 2')
+        self.assertEqual(contact_1_2.opportunity_count, 0, 'Should contain own, aka none')

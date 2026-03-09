@@ -5,6 +5,7 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
 from odoo import api, exceptions, fields, models, _
+from odoo.tools import format_list
 
 
 class ResConfigSettings(models.TransientModel):
@@ -14,6 +15,7 @@ class ResConfigSettings(models.TransientModel):
     group_use_recurring_revenues = fields.Boolean(string="Recurring Revenues", implied_group='crm.group_use_recurring_revenues')
     # Membership
     is_membership_multi = fields.Boolean(string='Multi Teams', config_parameter='sales_team.membership_multi')
+    module_partnership = fields.Boolean("Membership / Partnership")
     # Lead assignment
     crm_use_auto_assignment = fields.Boolean(
         string='Rule-Based Assignment', config_parameter='crm.lead.auto.assignment')
@@ -61,7 +63,8 @@ class ResConfigSettings(models.TransientModel):
                 setting.crm_auto_assignment_run_datetime = assign_cron.nextcall
             else:
                 setting.crm_auto_assignment_action = 'manual'
-                setting.crm_auto_assignment_interval_type = setting.crm_auto_assignment_run_datetime = False
+                setting.crm_auto_assignment_interval_type = 'days'
+                setting.crm_auto_assignment_run_datetime = False
                 setting.crm_auto_assignment_interval_number = 1
 
     @api.onchange('crm_auto_assignment_interval_type', 'crm_auto_assignment_interval_number')
@@ -125,16 +128,16 @@ class ResConfigSettings(models.TransientModel):
         for setting in self:
             if setting.predictive_lead_scoring_fields:
                 field_names = [_('Stage')] + [field.name for field in setting.predictive_lead_scoring_fields]
-                setting.predictive_lead_scoring_field_labels = _('%s and %s', ', '.join(field_names[:-1]), field_names[-1])
+                setting.predictive_lead_scoring_field_labels = format_list(self.env, field_names)
             else:
                 setting.predictive_lead_scoring_field_labels = _('Stage')
 
     def set_values(self):
         group_use_lead_id = self.env['ir.model.data']._xmlid_to_res_id('crm.group_use_lead')
-        has_group_lead_before = group_use_lead_id in self.env.user.groups_id.ids
+        has_group_lead_before = group_use_lead_id in self.env.user.all_group_ids.ids
         super(ResConfigSettings, self).set_values()
         # update use leads / opportunities setting on all teams according to settings update
-        has_group_lead_after = group_use_lead_id in self.env.user.groups_id.ids
+        has_group_lead_after = group_use_lead_id in self.env.user.all_group_ids.ids
         if has_group_lead_before != has_group_lead_after:
             teams = self.env['crm.team'].search([])
             teams.filtered('use_opportunities').use_leads = has_group_lead_after
@@ -167,4 +170,4 @@ class ResConfigSettings(models.TransientModel):
 
     def action_crm_assign_leads(self):
         self.ensure_one()
-        return self.env['crm.team'].search([('assignment_optout', '=', False)]).action_assign_leads(work_days=2, log=False)
+        return self.env['crm.team'].search([('assignment_optout', '=', False)]).action_assign_leads()
