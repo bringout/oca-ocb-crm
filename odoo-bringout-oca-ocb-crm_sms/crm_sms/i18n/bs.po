@@ -24,3 +24,8 @@ msgstr "SMS"
 #: model:ir.actions.act_window,name:crm_sms.crm_lead_act_window_sms_composer_multi
 msgid "Send SMS Text Message"
 msgstr "Pošalji SMS poruku"
+
+#. module: crm_sms
+#: model:ir.actions.act_window,name:crm_sms.crm_lead_act_window_sms_composer_multi
+msgid "Send SMS"
+msgstr "Pošalji SMS"

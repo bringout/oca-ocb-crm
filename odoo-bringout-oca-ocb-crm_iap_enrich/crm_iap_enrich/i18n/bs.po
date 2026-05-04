@@ -69,7 +69,7 @@ msgstr "Obogatite priliku podacima tvrtke"
 #. module: crm_iap_enrich
 #: model:ir.model.fields,field_description:crm_iap_enrich.field_crm_lead__iap_enrich_done
 msgid "Enrichment done"
-msgstr "Enrichment done"
+msgstr ""
 
 #. module: crm_iap_enrich
 #: model_terms:ir.ui.view,arch_db:crm_iap_enrich.mail_message_lead_enrich_no_email
@@ -78,7 +78,7 @@ msgstr "Obogaćivanje potencijalnih klijenata (na osnovu e-mail adrese)"
 
 #. module: crm_iap_enrich
 #. odoo-python
-#: code:addons/crm_iap_enrich/models/crm_lead.py
+#: code:addons/crm_iap_enrich/models/crm_lead.py:0
 #, python-format
 msgid "Lead enriched based on email address"
 msgstr "Potencijalni klijent obogaćen na osnovu e-mail adrese"
@@ -92,21 +92,21 @@ msgstr "Potencijal/prilika"
 # taken from hr.po
 #. module: crm_iap_enrich
 #. odoo-python
-#: code:addons/crm_iap_enrich/models/crm_lead.py
+#: code:addons/crm_iap_enrich/models/crm_lead.py:0
 #, python-format
 msgid "Not enough credits for Lead Enrichment"
 msgstr "Nema dovoljno kredita za obogaćivanje leadova"
 
 #. module: crm_iap_enrich
 #. odoo-python
-#: code:addons/crm_iap_enrich/models/crm_lead.py
+#: code:addons/crm_iap_enrich/models/crm_lead.py:0
 #, python-format
 msgid "Sent batch %s enrich requests: failed with exception %s"
 msgstr "Poslana serija %s zahtjeva za obogaćivanje: neuspješno sa greškom %s"
 
 #. module: crm_iap_enrich
 #. odoo-python
-#: code:addons/crm_iap_enrich/models/crm_lead.py
+#: code:addons/crm_iap_enrich/models/crm_lead.py:0
 #, python-format
 msgid "The leads/opportunities have successfully been enriched"
 msgstr "Potencijalni klijenti/prilike su uspješno obogaćeni"
@@ -119,3 +119,28 @@ msgid ""
 msgstr ""
 "Da li je IAP usluga za obogaćivanje potencijalnih klijenata na osnovu "
 "e-pošte izvršena na ovom potencijalnom klijentu."
+
+#. module: crm_iap_enrich
+#: code:addons/crm_iap_enrich/models/crm_lead.py:0
+msgid "An error occurred during lead enrichment"
+msgstr "Došlo je do greške tokom obogaćivanja lead-a"
+
+#. module: crm_iap_enrich
+#: model:ir.model,website_form_label:crm_iap_enrich.model_crm_lead
+msgid "Create an Opportunity"
+msgstr "Kreiraj priliku"
+
+#. module: crm_iap_enrich
+#: model:ir.model.fields,field_description:crm_iap_enrich.field_crm_lead__display_name
+msgid "Display Name"
+msgstr "Naziv za prikaz"
+
+#. module: crm_iap_enrich
+#: model:ir.model.fields,field_description:crm_iap_enrich.field_crm_lead__id
+msgid "ID"
+msgstr "ID"
+
+#. module: crm_iap_enrich
+#: model:ir.model,name:crm_iap_enrich.model_crm_lead
+msgid "Lead"
+msgstr "Potencijal"
