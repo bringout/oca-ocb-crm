@@ -41,7 +41,7 @@ class CrmLead(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         leads = super().create(vals_list)
-        enrich_mode = self.env['ir.config_parameter'].sudo().get_param('crm.iap.lead.enrich.setting', 'auto')
+        enrich_mode = self.env['ir.config_parameter'].sudo().get_str('crm.iap.lead.enrich.setting') or 'auto'
         if enrich_mode == 'auto':
             cron = self.env.ref('crm_iap_enrich.ir_cron_lead_enrichment', raise_if_not_found=False)
             if cron:
@@ -132,7 +132,7 @@ class CrmLead(models.Model):
                     self.env['ir.cron']._commit_progress(remaining=0)
                     break
                 except Exception:
-                    self.env.cr.rollback()
+                    self.env['ir.cron']._rollback_progress()
                     _logger.error('A batch of leads could not be enriched: %s', repr(leads))
                     time_left = self.env['ir.cron']._commit_progress(len(leads))
                 if not time_left:
@@ -151,7 +151,7 @@ class CrmLead(models.Model):
                     break
                 except Exception:
                     if not modules.module.current_test:
-                        self.env.cr.rollback()
+                        self.env['ir.cron']._rollback_progress()
                     _logger.error('A batch of leads could not be enriched: %s', repr(leads))
 
     @api.model

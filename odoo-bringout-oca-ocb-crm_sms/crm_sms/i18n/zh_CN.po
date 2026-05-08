@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server saas~12.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-25 18:36+0000\n"
+"POT-Creation-Date: 2025-10-08 18:38+0000\n"
 "PO-Revision-Date: 2025-11-16 15:08+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translate.odoo.com/"
@@ -33,9 +33,3 @@ msgstr "电话短信（SMS）"
 #: model:ir.actions.act_window,name:crm_sms.crm_lead_act_window_sms_composer_single
 msgid "Send SMS"
 msgstr "发送短信息"
-
-#~ msgid "Lead/Opportunity"
-#~ msgstr "线索/商机"
-
-#~ msgid "Send SMS Text Message"
-#~ msgstr "发送文本短信"

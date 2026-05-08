@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 
@@ -11,6 +10,7 @@
     'website': 'https://www.odoo.com/app/crm',
     'depends': [
         'base_setup',
+        'base_install_request',
         'sales_team',
         'mail',
         'calendar',
@@ -31,14 +31,13 @@
         'data/crm_stage_data.xml',
         'data/crm_team_data.xml',
         'data/digest_data.xml',
-        'data/ir_action_data.xml',
         'data/ir_cron_data.xml',
         'data/mail_message_subtype_data.xml',
         'data/crm_recurring_plan_data.xml',
+        'data/mail_templates.xml',
         'data/crm_tour.xml',
 
         'wizard/crm_lead_lost_views.xml',
-        'wizard/crm_lead_to_opportunity_views.xml',
         'wizard/crm_lead_to_opportunity_mass_views.xml',
         'wizard/crm_merge_opportunities_views.xml',
         'wizard/crm_lead_pls_update_views.xml',
@@ -60,6 +59,7 @@
         'views/crm_team_views.xml',
         'views/crm_menu_views.xml',
         'views/crm_helper_templates.xml',
+        'views/crm_lead_templates.xml',
     ],
     'demo': [
         'data/crm_team_demo.xml',
@@ -68,7 +68,6 @@
         'data/crm_team_member_demo.xml',
         'data/crm_lead_demo.xml',
     ],
-    'installable': True,
     'application': True,
     'assets': {
         'web.assets_backend': [
