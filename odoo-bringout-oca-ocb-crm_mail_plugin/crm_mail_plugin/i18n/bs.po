@@ -148,3 +148,45 @@ msgstr "ID"
 #: model:ir.model,name:crm_mail_plugin.model_crm_lead
 msgid "Lead"
 msgstr "Potencijal"
+
+#. module: crm_mail_plugin
+#: code:addons/crm_mail_plugin/controllers/mail_plugin.py:0
+msgid ""
+"%(expected_revenue)s + %(recurring_revenue)s %(recurring_plan)s at "
+"%(probability)s%%"
+msgstr ""
+
+#. module: crm_mail_plugin
+#: code:addons/crm_mail_plugin/controllers/mail_plugin.py:0
+msgid "%(expected_revenue)s at %(probability)s%%"
+msgstr ""
+
+#. module: crm_mail_plugin
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
+msgid "Could not create the opportunity"
+msgstr ""
+
+#. module: crm_mail_plugin
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
+msgid "Email already logged on the opportunity"
+msgstr ""
+
+#. module: crm_mail_plugin
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
+msgid "Log the email on the opportunity"
+msgstr ""
+
+#. module: crm_mail_plugin
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
+msgid "New"
+msgstr ""
+
+#. module: crm_mail_plugin
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
+msgid "Search Opportunities"
+msgstr ""
+
+#. module: crm_mail_plugin
+#: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
+msgid "Show all"
+msgstr ""

@@ -213,3 +213,13 @@ msgstr "npr. Cijene proizvoda"
 #: code:addons/crm_livechat/models/chatbot_script_step.py:0
 msgid "livechat discussion"
 msgstr "live chat razgovor"
+
+#. module: crm_livechat
+#: model_terms:ir.ui.view,arch_db:crm_livechat.crm_lead_view_form
+msgid "<span class=\"o_stat_text\">View Live Chat</span>"
+msgstr ""
+
+#. module: crm_livechat
+#: code:addons/crm_livechat/models/discuss_channel.py:0
+msgid "created a new lead: %s"
+msgstr ""
