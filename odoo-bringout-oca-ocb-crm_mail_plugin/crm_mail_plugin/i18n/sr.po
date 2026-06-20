@@ -3,16 +3,15 @@
 # 	* crm_mail_plugin
 # 
 # Translators:
-# Martin Trigaux, 2022
-# Dragan Vukosavljevic <dragan.vukosavljevic@gmail.com>, 2022
+# Dragan Vukosavljevic <dragan.vukosavljevic@gmail.com>, 2023
 # コフスタジオ, 2024
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 16.0\n"
+"Project-Id-Version: Odoo Server 17.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-06 13:31+0000\n"
-"PO-Revision-Date: 2022-09-22 05:45+0000\n"
+"POT-Creation-Date: 2023-10-26 21:55+0000\n"
+"PO-Revision-Date: 2023-10-26 23:09+0000\n"
 "Last-Translator: コフスタジオ, 2024\n"
 "Language-Team: Serbian (https://app.transifex.com/odoo/teams/41243/sr/)\n"
 "MIME-Version: 1.0\n"
@@ -53,7 +52,7 @@ msgstr "Nije bilo moguće kreirati potencijalnog kupca"
 #: code:addons/crm_mail_plugin/static/src/to_translate/translations_gmail.xml:0
 #, python-format
 msgid "Email already logged on the lead"
-msgstr "Email već prijavljen na vodećem mestu"
+msgstr "Email već prijavljen na potencijalnom kupcu"
 
 #. module: crm_mail_plugin
 #: model:ir.model,name:crm_mail_plugin.model_crm_lead
@@ -63,7 +62,7 @@ msgstr "Lid/Prodajna prilika"
 #. module: crm_mail_plugin
 #: model:ir.actions.act_window,name:crm_mail_plugin.crm_lead_action_form_edit
 msgid "Lead: redirect form in edit mode"
-msgstr "Voditi: preusmeri obrazac u režimu uređivanja"
+msgstr "Prilike: preusmeri obrazac u režimu uređivanja"
 
 #. module: crm_mail_plugin
 #. odoo-javascript
@@ -91,7 +90,7 @@ msgstr "Nisu pronađene prilike za ovaj kontakt."
 #: code:addons/crm_mail_plugin/static/src/to_translate/translations_outlook.xml:0
 #, python-format
 msgid "Opportunities"
-msgstr "Prilike"
+msgstr "Prodajne prilike"
 
 #. module: crm_mail_plugin
 #. odoo-javascript
